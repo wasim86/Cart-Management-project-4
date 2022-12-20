@@ -1,12 +1,14 @@
 const express=require('express')
 const router=express.Router()
-let{create, getuser, updateuser}=require("../controler/user")
+let{create,login, getuser, updateuser}=require("../controller/user")
+let{authentication} = require('../middleware/authentication')
 
 
 
 
 router.post("/register",create)
-router.get("/user/:userId/profile",getuser)
+router.post('/login',login)
+router.get("/user/:userId/profile",authentication,getuser)
 router.put("/user/:userId/profile",updateuser)
 
 
