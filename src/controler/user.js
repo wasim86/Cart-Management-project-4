@@ -16,7 +16,12 @@ const isValidEmail = function (value) {
   function isValideMobile(value){
     return (typeof value === "string" &&  value.trim().length > 0 && value.match(/^[0-9]{10}$/))
   }
+  function isValidpin(value){
+    return (typeof value === "string" &&  value.trim().length > 0 && value.match(/^[0-9]{6}$/))
+  }
 
+  
+ 
 exports.create=async function(req,res){
     try {
     let files= req.files
@@ -42,7 +47,7 @@ exports.create=async function(req,res){
 
 
         if (!data.address.shipping.pincode) return res.status(400).send({ status: false, message: "Shipping Pincode is required!" })
-       // if (!isValid.validPin(data.address.shipping.pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
+        if (!isValidpin(data.address.shipping.pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
         
 
         if (!data.address.billing.street) return res.status(400).send({ status: false, message: "Billing Street is required!" });
@@ -51,7 +56,7 @@ exports.create=async function(req,res){
 
         if (!data.address.billing.pincode) return res.status(400).send({ status: false, message: "Billing Pincode is required!" });
         
-       // if (!isValid.validPin(data.address.billing.pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
+        if (!isValidpin(data.address.billing.pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
    }
  
     
