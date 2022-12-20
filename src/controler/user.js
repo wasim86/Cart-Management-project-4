@@ -23,57 +23,56 @@ exports.create=async function(req,res){
     if(!files &&files.length==0) return res.status(400).send({status:false,msg:"files are empty"})
     let uploadedFileURL= await uploadFile( files[0] )
 
-    console.log(uploadedFileURL)
+  
     let data=req.body
-    console.log(data)
-    let{fname,lname,email,phone,password}=data
-    // if(!fname) return res.status(400).send({status:false,msg:"fname is mendatory"})
-    // if(!lname) return res.status(400).send({status:false,msg:"lname is mendatory"})
-    // if(!email) return res.status(400).send({status:false,msg:"email is mendatory"})
-    // if(!phone) return res.status(400).send({status:false,msg:"phone is mendatory"})
-    // if(!password) return res.status(400).send({status:false,msg:"password is mendatory"})
-    // if(!data.address.shipping.street) return res.status(400).send({status:false,msg:"street is mendatory"})
-    // if(!data.address.shipping.city) return res.status(400).send({status:false,msg:"city is mendatory"})
-    // if(!data.address.shipping.pincode) return res.status(400).send({status:false,msg:"pincode is mendatory"})
-    // if(!data.address.billing.street) return res.status(400).send({status:false,msg:"street is mendatory"})
-    // if(!data.address.billing.sity) return res.status(400).send({status:false,msg:"city is mendatory"})
-    // if(!data.address.billing.pincode) return res.status(400).send({status:false,msg:"pincode is mendatory"})
     
-    // let phoneno=await usermodel.findOne({phone:phone}) 
-    // if(phoneno)return res.status(400).send({status:false,msg:"phone should be unique"})
+    let{fname,lname,email,phone,password,address}=data
+    data.profileImage=uploadedFileURL
+    if(!fname) return res.status(400).send({status:false,msg:"fname is mendatory"})
+    if(!lname) return res.status(400).send({status:false,msg:"lname is mendatory"})
+    if(!email) return res.status(400).send({status:false,msg:"email is mendatory"})
+    if(!phone) return res.status(400).send({status:false,msg:"phone is mendatory"})
+    if(!password) return res.status(400).send({status:false,msg:"password is mendatory"})
+    if(address){
+      data.address=JSON.parse(address)
+        if (!data.address.shipping.street) return res.status(400).send({ status: false, message: "Shipping Street is required!" });
+
+
+        if (!data.address.shipping.city) return res.status(400).send({ status: false, message: "Shipping City is required!" });
+
+
+        if (!data.address.shipping.pincode) return res.status(400).send({ status: false, message: "Shipping Pincode is required!" })
+       // if (!isValid.validPin(data.address.shipping.pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
+        
+
+        if (!data.address.billing.street) return res.status(400).send({ status: false, message: "Billing Street is required!" });
+
+        if (!data.address.billing.city) return res.status(400).send({ status: false, message: "Billing City is required!" });
+
+        if (!data.address.billing.pincode) return res.status(400).send({ status: false, message: "Billing Pincode is required!" });
+        
+       // if (!isValid.validPin(data.address.billing.pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
+   }
+ 
     
-    // let emailid=await usermodel.findOne({email:email})
-    // if(emailid) return res.status.send({status:false,msg:"email should be unique"})
+    let phoneno=await usermodel.findOne({phone:phone}) 
+    if(phoneno)return res.status(400).send({status:false,msg:"phone should be unique"})
     
-    // if(!isValidEmail(email))return res.status(400).send({status:false,msg:"email is not valid"})
-    // if(!isValidPassword(password))return res.status(400).send({status:false,msg:"password is not valid"})
-    // if(!isValideMobile(phone))return res.status(400).send({status:false,msg:"phone is not valid"})
+    let emailid=await usermodel.findOne({email:email})
+    if(emailid) return res.status(400).send({status:false,msg:"email should be unique"})
+    
+    if(!isValidEmail(email))return res.status(400).send({status:false,msg:"email is not valid"})
+    if(!isValidPassword(password))return res.status(400).send({status:false,msg:"password is not valid"})
+    if(!isValideMobile(phone))return res.status(400).send({status:false,msg:"phone is not valid"})
     const salt = await bcrypt.genSalt(10)
     const secPass =await bcrypt.hash(password,salt)
-     let newdata={
-        fname:fname ,
-        lname:lname,
-        email:email ,
-        profileImage:uploadedFileURL,
-        phone:phone,
-        password:secPass ,
-        address:{
-            shipping: {
-              street:data.address.shipping.street,
-              city:data.address.shipping.city,
-              pincode:data.address.shipping.pincode
-            },
-            billing: {
-              street: data.address.billing.street,
-              city: data.address.billing.city,
-              pincode:data.address.billing.pincode
-            }
-          }
-     }
- console.log (newdata)
-     const createdata= await usermodel.create(data)
-     return req.status(201).send({status:true,msg:"sucessfull creaction",data:createdata})    
+    data.password=secPass
+    const createdata= await usermodel.create(data)
+    
+
+     return res.status(201).send({status:true,msg:"sucessfull creaction",data:createdata})    
     } catch (error) {
         return res.status(500).send({status:false,msg:error.message})
     }
 }
+
