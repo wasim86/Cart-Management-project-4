@@ -2,7 +2,8 @@ const aws= require("aws-sdk")
 const{uploadFile}=require("../aws/aws")
 const usermodel=require("../models/userModel")
 const bcrypt=require("bcrypt")
-
+const { default: mongoose } = require("mongoose")
+const objectId=mongoose.Types.ObjectId
 const isValidEmail = function (value) {
     let emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-z\-0-9]+\.)+[a-z]{2,}))$/;
     if (emailRegex.test(value)) return true;
@@ -19,7 +20,9 @@ const isValidEmail = function (value) {
   function isValidpin(value){
     return (typeof value === "string" &&  value.trim().length > 0 && value.match(/^[0-9]{6}$/))
   }
-
+  function isValide(value) {
+    return (typeof value === "string" && value.trim().length > 0 && value.match(/^[A-Za-z ][A-Za-z _]{1,100}$/));
+}
   
  
 exports.create=async function(req,res){
@@ -83,12 +86,41 @@ exports.create=async function(req,res){
 
 
 exports.getuser=async function(req,res){
-  try{const userid=peq.params.userId
+  try{const userid=req.params.userId
 
   if(!objectId.isValid(userid)){return res.status(400).send({status:false,msg:"please enter valide id"})}
-  const data=await usermodel.findById(userid)
+  
+  const data=await usermodel.findById(userid).lean()
+  let{fname,lname,email,phone,password,address,_id}=data
+ 
+  let newdata=
+    {
+      address: {
+          shipping:{
+              street:address.shipping.street,
+              city: address.shipping.city,
+              pincode:address.shipping.pincode
+          },
+          billing: {
+            street:address.billing.street,
+            city: address.billing.city,
+            pincode:address.billing.pincode
+          }
+      },
+      _id: _id,
+      fname: fname,
+      lname: lname,
+      email: email,
+      profileImage: data.profileImage,
+      phone:phone,
+      password:password,
+      
+
+  }
+  
   if(!data){return res.status(400).send({status:false,msg:"userid is not valid"})}
-  res.status(200).send({status:true,msg:'User profile details',data:data})
+  
+  res.status(200).send({status:true,msg:'User profile details',data:newdata})
   }catch(err){return res.status(500).send({status:false,msg:err.message})}
 
   
@@ -97,8 +129,8 @@ exports.getuser=async function(req,res){
 exports.updateuser=async function(req,res){
   try{const userid=req.params.userId
   if(!objectId.isValid(userid)){return res.status(400).send({status:false,msg:"please enter valide userid"})}
-  const data=req.files
-  const {fname,lname,email,phone,password}=data
+  const data=req.body
+  const {fname,lname,email,phone,password,address}=data
   if(fname){
     if(!isValide(fname)){return res.status(400).send({status:false,msg:"Please enter valide fname"})}
     data.fname=fname
@@ -121,43 +153,37 @@ exports.updateuser=async function(req,res){
     const secPass =await bcrypt.hash(password,salt)
     data.password=secPass
   }
-  if(files.address.shipping.street){
-    let street=files.billing.address.street
-    if(!isValide(street)){return res.status(400).send({status:false,msg:"Please enter valide street"})}
-     data.address.shipping.street=street
-  }
-  if(files.address.address.city){
-    let city=files.billing.address.city
-    if(!isValide(city)){return res.status(400).send({status:false,msg:"Please enter valide city"})}
-    data.billing.address.city=city
-  }
-  if(files.address.address.pincode){
-    let pincode=files.billing.address.pincode
-    if(!isValide(pincode)){return res.status(400).send({status:false,msg:"Please enter valide pincode"})}
-    data.billing.address.pincode=pincode
-  }
+  const useridvalid=await usermodel.findById(userid)
+  if(address){
+    data.address=JSON.parse(address)
+      if (!data.address.shipping.street) {return res.status(400).send({status:false,msg:"if you want to change address you should fill all adress parts"})}
+          if(!isValide(data.address.shipping.street)){return res.status(400).send({status:false,msg:"Please enter valide street"})}
+  
+      if (!data.address.shipping.city) {return res.status(400).send({status:false,msg:"if you want to change address you should fill all adress parts"})}
+      if(!isValide(data.address.shipping.city)){return res.status(400).send({status:false,msg:"Please enter valide city"})}
+  
 
-  if(files.billing.shipping.street){
-    let street=files.billing.address.street
-    if(!isValide(street)){return res.status(400).send({status:false,msg:"Please enter valide street"})}
-    data.billing.address.street=street
-  }
-  if(files.billing.address.city){
-    let city=files.billing.address.city
-    if(!isValide(city)){return res.status(400).send({status:false,msg:"Please enter valide city"})}
-    data.billing.address.city=city
-  }
-  if(files.billing.address.pincode){
-    let pincode=files.billing.address.pincode
-    if(!isValide(pincode)){return res.status(400).send({status:false,msg:"Please enter valide pincode"})}
-    data.billing.address.pincode=pincode
-  }
+      if (!data.address.shipping.pincode) {return res.status(400).send({status:false,msg:"if you want to change address you should fill all adress parts"})}
+      if (!isValidpin(data.address.shipping.pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
+      
+
+      if (!data.address.billing.street) {return res.status(400).send({status:false,msg:"if you want to change address you should fill all adress parts"})}
+
+      if (!data.address.billing.city) {return res.status(400).send({status:false,msg:"if you want to change address you should fill all adress parts"})}
+
+
+      if (!data.address.billing.pincode) {return res.status(400).send({status:false,msg:"if you want to change address you should fill all adress parts"})}
+
+      
+      if (!isValidpin(data.address.billing.pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
+ }
 
 
   const emailvalid=await usermodel.findOne({email:email})
-  if(emailvalid){return res.status(409).send({status:false,msg:"email is already existing"})}
+  if(emailvalid){return res.status(400).send({status:false,msg:"email is already existing"})}
   const phonevalid=await usermodel.findOne({email:email})
-  if(phonevalid){return res.status(409).send({status:false,msg:"phone is already existing"})}
+  if(phonevalid){return res.status(400).send({status:false,msg:"phone is already existing"})}
+
  
   const updatedata=await usermodel.findByIdAndUpdate(userid,{$set:data},{new:true})
   if(!updatedata){return res.status(404).send({status:false,msg:"userid is not exist"})}
