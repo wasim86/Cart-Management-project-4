@@ -1,6 +1,7 @@
 const aws = require("aws-sdk")
 const { uploadFile } = require("../aws/aws")
 const usermodel = require("../models/userModel")
+const jwt=require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const { default: mongoose } = require("mongoose")
 const objectId = mongoose.Types.ObjectId
