@@ -215,20 +215,6 @@ exports.updateuser = async function (req, res) {
 }
 
 /**********************************************getProductby id************************************************/
-exports.getProduct = async function(req,res){
-  try{
 
-  let productId= req.params.productId
-  if(!objectId(productId)) return res.status(400).send({status:false, msg: "invalid productId" })
-
-  let product = await productModel.findOne({isDeleted:false, _id: productId})
-  if(!product) return res.status(404).send({status:false, msg: "product not found"})
-  
-  return res.status(200).send({status:true, data: product})
-}
-catch(error){
-  return res.status(500).send({status: false, message: error.message})
-}
-}
 
 
