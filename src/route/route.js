@@ -1,12 +1,11 @@
 const express=require('express')
 const router=express.Router()
 let{create,login, getuser, updateuser}=require("../controller/user")
-<<<<<<< HEAD
-let{authentication} = require('../middleware/authentication')
-let { createproduct, getproduct }=require('../controller/product')
-=======
+//let{authentication} = require('../middleware/authentication')
+let { createproduct, getproduct, getProductbyid, updateProduct, deleteProductById }=require('../controller/product')
+
 let{authentication,autherization} = require('../middleware/authentication')
->>>>>>> 01b3801 (authentication)
+
 
 
 
@@ -18,7 +17,9 @@ router.put("/user/:userId/profile",authentication,autherization,updateuser)
 
 router.post("/products",createproduct)
 router.get('/products',getproduct)
-
+router.get("/products/:productId",getProductbyid)
+router.put("/products/:productId",updateProduct)
+router.delete("/products/:productId",deleteProductById)
 
 
 module.exports=router
