@@ -5,7 +5,7 @@ let{create,login, getuser, updateuser}=require("../controller/user")
 let { createproduct, getproduct, getProductbyid, updateProduct, deleteProductById }=require('../controller/product')
 
 let{authentication,autherization} = require('../middleware/authentication')
-
+let { createcart }=require('../controller/cart')
 
 
 
@@ -21,6 +21,7 @@ router.get("/products/:productId",getProductbyid)
 router.put("/products/:productId",updateProduct)
 router.delete("/products/:productId",deleteProductById)
 
+router.post("/user/:userId/cart",createcart)
 
 module.exports=router
 

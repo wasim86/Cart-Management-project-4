@@ -5,7 +5,7 @@ const mongoose=require('mongoose')
 const objectId=mongoose.Types.ObjectId
 
 function isValide(value) {
-    return (typeof value === "string" && value.trim().length > 0 && value.match(/^[A-Za-z ][A-Za-z _]{1,100}$/));
+    return (typeof value === "string" && value.trim().length > 0 && value.match(/^[A-Za-z ][A-Za-z _]*$/));
 }
 //  function isValidprice(value){
 //     return (typeof value === "number" &&  value.trim().length > 0 && value.match(/^[0-9]{10}$/))
