@@ -111,10 +111,10 @@ exports.getuser = async function (req, res) {
 
     if (!objectId.isValid(userid)) { return res.status(400).send({ status: false, msg: "please enter valide id" }) }
 
-    const data = await usermodel.findById(userid).lean()
-    let { fname, lname, email, phone, password, address, _id } = data
+    const data = await usermodel.findById(userid)
+   // let { fname, lname, email, phone, password, address, _id } = data
 
-    let newdata =
+    /*let newdata =
     {
       address: {
         shipping: {
@@ -137,11 +137,11 @@ exports.getuser = async function (req, res) {
       password: password,
 
 
-    }
+    }*/
 
     if (!data) { return res.status(400).send({ status: false, msg: "userid is not valid" }) }
 
-    res.status(200).send({ status: true, msg: 'User profile details', data: newdata })
+    res.status(200).send({ status: true, msg: 'User profile details', data: data })
   } catch (err) { return res.status(500).send({ status: false, msg: err.message }) }
 
 
@@ -177,7 +177,7 @@ exports.updateuser = async function (req, res) {
       data.password = secPass
     }
     const useridvalid = await usermodel.findById(userid)
-    if (address) {
+    /*if (address) {
       data.address = JSON.parse(address)
       if (!data.address.shipping.street) { return res.status(400).send({ status: false, msg: "if you want to change address you should fill all adress parts" }) }
       if (!isValide(data.address.shipping.street)) { return res.status(400).send({ status: false, msg: "Please enter valide street" }) }
@@ -199,7 +199,7 @@ exports.updateuser = async function (req, res) {
 
 
       if (!isValidpin(data.address.billing.pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
-    }
+    }*/
 
 
     const emailvalid = await usermodel.findOne({ email: email })
