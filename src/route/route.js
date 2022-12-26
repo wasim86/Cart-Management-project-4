@@ -13,7 +13,7 @@ let { createorder, updateorder }=require('../controller/order')
 router.post("/register",create)
 router.post('/login',login)
 router.get("/user/:userId/profile",getuser)
-router.put("/user/:userId/profile",updateuser)
+router.put("/user/:userId/profile",authentication,autherization,updateuser)
 
 router.post("/products",createproduct)
 router.get('/products',getproduct)
@@ -26,7 +26,7 @@ router.put("/users/:userId/cart",updatecart)
 router.get("/users/:userId/cart",getCartData)
 router.delete("/users/:userId/cart",deletecart)
 
-router.post("/users/:userId/orders",createorder)
+router.post("/users/:userId/orders",authentication,autherization,createorder)
 router.put("/users/:userId/orders",updateorder)
 
 

@@ -7,9 +7,9 @@ const objectId=mongoose.Types.ObjectId
 function isValide(value) {
     return (typeof value === "string" && value.trim().length > 0 && value.match(/^[A-Za-z ][A-Za-z _]*$/));
 }
-//  function isValidprice(value){
-//     return (typeof value === "number" &&  value.trim().length > 0 && value.match(/^[0-9]{10}$/))
-//   }
+ function isValidprice(value){
+    return (typeof value === "string" &&  value.trim().length > 0 && value.match(/^[0-9]$/))
+  }
 
 exports.createproduct=async function(req,res){
   try{
@@ -30,7 +30,8 @@ exports.createproduct=async function(req,res){
   if(!isValide(title)){return res.status(400).send({status:false,msg:'please enter valide titel'})}
   if(!isValide(description)){return res.status(400).send({status:false,msg:'please enter valide description'})}
   if(!isValide(currencyId)){return res.status(400).send({status:false,msg:'please enter valide currencyId'})}
-  if(price)data.price=price
+  if(!price.match(/^[0-9]$/)){return res.status(400).send({status:false,msg:"Please enter valide proce"})}
+  
   const arr=["S", "XS","M","X", "L","XXL", "XL"]
   
     const arrsize= availableSizes.split(",").map(x=>x.trim())

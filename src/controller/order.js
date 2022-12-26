@@ -1,7 +1,6 @@
 const ordermodel=require('../models/orderModel')
 const  userModel = require('../models/userModel')
 const cartModel = require('../models/cartModel')
-//const { CloudSearch } = require('aws-sdk')
 const mongoose=require('mongoose')
 const objectId=mongoose.Types.ObjectId
 exports.createorder=async function(req,res){
@@ -27,7 +26,7 @@ exports.createorder=async function(req,res){
        {
          count=count+items[i].quantity
        }
-   // const obj={
+   
         data.userId=userId,
         data.items=items,
         data.totalPrice=totalPrice,
@@ -49,8 +48,8 @@ exports.updateorder=async function(req,res){
     if(!userdata) return res.status(404).send({status:false,msg:"user is not exist"})
     let data=req.body
     let {orderId}=data
-    let savedata=await ordermodel.findOneAndUpdate({_id:orderId,cancellable:true,userId:userId},{$set:{status:"cancled"}},{new:true})
+    let savedata=await ordermodel.findOneAndUpdate({_id:orderId,cancellable:true,userId:userId,status:"pending"},{$set:{status:"cancled"}},{new:true})
     console.log(savedata)
-    if(!savedata){return res.status(404).send({status:false,msg:"request feld"})}
+    if(!savedata){return res.status(404).send({status:false,msg:"order is fail"})}
     return res.status(200).send({status:true,msg:"sucessfully update",data:savedata})
 }

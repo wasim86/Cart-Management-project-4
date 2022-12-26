@@ -4,6 +4,7 @@ const usermodel = require("../models/userModel")
 const bcrypt = require("bcrypt")
 const { default: mongoose } = require("mongoose")
 const objectId = mongoose.Types.ObjectId
+const jwt=require('jsonwebtoken')
 const isValidEmail = function (value) {
   let emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-z\-0-9]+\.)+[a-z]{2,}))$/;
   if (emailRegex.test(value)) return true;
@@ -30,11 +31,12 @@ exports.create = async function (req, res) {
     let files = req.files
     if (!files && files.length == 0) return res.status(400).send({ status: false, msg: "files are empty" })
     let uploadedFileURL = await uploadFile(files[0])
-
+    
 
     let data = req.body
 
     let { fname, lname, email, phone, password, address } = data
+    console.log(data)
     data.profileImage = uploadedFileURL
     if (!fname) return res.status(400).send({ status: false, msg: "fname is mendatory" })
     if (!lname) return res.status(400).send({ status: false, msg: "lname is mendatory" })
@@ -151,26 +153,25 @@ exports.updateuser = async function (req, res) {
     }
     const useridvalid = await usermodel.findById(userid)
     if(!useridvalid){return res.status(404).send({status:false,msg:"userid is not exist"})}
-    const {shipping,billing}=address
+    
     if (address) {
       data.address = JSON.parse(address)
-       
-
-        //address.shipping=JSON.parse(shipping)
+      const {shipping,billing}=data.address
      
        if(shipping){
         const{street,city,pincode}=shipping
-     // if (!street) { return res.status(400).send({ status: false, msg: "if you want to change address you should fill all adress parts" }) }
+      if (!street) { return res.status(400).send({ status: false, msg: "if you want to change address you should fill all adress parts" }) }
       if (!isValide(street)) { return res.status(400).send({ status: false, msg: "Please enter valide street" }) }
 
-      //if (!data.address.shipping.city) { return res.status(400).send({ status: false, msg: "if you want to change address you should fill all adress parts" }) }
+      if (!data.address.shipping.city) { return res.status(400).send({ status: false, msg: "if you want to change address you should fill all adress parts" }) }
       if (!isValide(city)) { return res.status(400).send({ status: false, msg: "Please enter valide city" }) }
 
 
-     // if (pincode) { return res.status(400).send({ status: false, msg: "if you want to change address you should fill all adress parts" }) }
+      if (pincode) { return res.status(400).send({ status: false, msg: "if you want to change address you should fill all adress parts" }) }
       if (!isValidpin(pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
 
-       }
+       }else{return res.status(400).send({status:false,msg:"shipping is required"})}
+       if(billing){
       if (!data.address.billing.street) { return res.status(400).send({ status: false, msg: "if you want to change address you should fill all adress parts" }) }
 
       if (!data.address.billing.city) { return res.status(400).send({ status: false, msg: "if you want to change address you should fill all adress parts" }) }
@@ -180,6 +181,7 @@ exports.updateuser = async function (req, res) {
 
 
       if (!isValidpin(data.address.billing.pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
+       }else{return res.status(400).send({status:false,msg:"billing is requried"})}
     }
 
 
@@ -195,7 +197,6 @@ exports.updateuser = async function (req, res) {
   } catch (err) { return res.status(500).send({ status: false, msg: err.message }) }
 }
 
-/**********************************************getProductby id************************************************/
 
 
 
