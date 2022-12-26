@@ -160,28 +160,28 @@ exports.updateuser = async function (req, res) {
      
        if(shipping){
         const{street,city,pincode}=shipping
-      if (!street) { return res.status(400).send({ status: false, msg: "if you want to change address you should fill all adress parts" }) }
+      if (!street) {data.address.shipping.street=useridvalid.address.shipping.street}
       if (!isValide(street)) { return res.status(400).send({ status: false, msg: "Please enter valide street" }) }
 
-      if (!data.address.shipping.city) { return res.status(400).send({ status: false, msg: "if you want to change address you should fill all adress parts" }) }
+      if (!data.address.shipping.city) { data.address.shipping.sity=useridvalid.address.shipping.sity }
       if (!isValide(city)) { return res.status(400).send({ status: false, msg: "Please enter valide city" }) }
 
 
-      if (pincode) { return res.status(400).send({ status: false, msg: "if you want to change address you should fill all adress parts" }) }
+      if (pincode) { data.address.shipping.pincode=useridvalid.address.shipping.pincode }
       if (!isValidpin(pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
 
-       }else{return res.status(400).send({status:false,msg:"shipping is required"})}
+       }else{data.address.shipping=useridvalid.address.shipping}
        if(billing){
-      if (!data.address.billing.street) { return res.status(400).send({ status: false, msg: "if you want to change address you should fill all adress parts" }) }
+      if (!data.address.billing.street) { data.address.billing.street=useridvalid.address.billing.street }
 
-      if (!data.address.billing.city) { return res.status(400).send({ status: false, msg: "if you want to change address you should fill all adress parts" }) }
+      if (!data.address.billing.city) { data.address.billing.sity=useridvalid.address.billing.sity}
 
 
-      if (!data.address.billing.pincode) { return res.status(400).send({ status: false, msg: "if you want to change address you should fill all adress parts" }) }
+      if (!data.address.billing.pincode) { data.address.billing.pincode=useridvalid.address.billing.pincode}
 
 
       if (!isValidpin(data.address.billing.pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
-       }else{return res.status(400).send({status:false,msg:"billing is requried"})}
+       }else{data.address.billing=useridvalid.address.billing}
     }
 
 
