@@ -30,7 +30,7 @@ exports.createproduct=async function(req,res){
   if(!isValide(title)){return res.status(400).send({status:false,msg:'please enter valide titel'})}
   if(!isValide(description)){return res.status(400).send({status:false,msg:'please enter valide description'})}
   if(!isValide(currencyId)){return res.status(400).send({status:false,msg:'please enter valide currencyId'})}
-   if(price)data.price=price
+  if(price)data.price=price
   const arr=["S", "XS","M","X", "L","XXL", "XL"]
   
     const arrsize= availableSizes.split(",").map(x=>x.trim())
@@ -134,6 +134,7 @@ exports.updateProduct = async function(req,res){
       obj.description=description
      }
     if(price){
+
         obj.price=price
     }
     if(style){
