@@ -29,7 +29,7 @@ exports.createproduct = async function (req, res) {
     if (!currencyId) { return res.status(400).send({ status: false, msg: "Please provide currencyId" }) }
     if (!currencyFormat) { return res.status(400).send({ status: false, msg: "Please provide currencyformate" }) }
     if (!isValide(title)) { return res.status(400).send({ status: false, msg: 'please enter valide titel' }) }
-    if (!isValide(description)) { return res.status(400).send({ status: false, msg: 'please enter valide description' }) }
+    //if (!isValide(description)) { return res.status(400).send({ status: false, msg: 'please enter valide description' }) }
     if (!isValide(currencyId)) { return res.status(400).send({ status: false, msg: 'please enter valide currencyId' }) }
     if (!price.match(/^[0-9]{0,100}$/)) { return res.status(400).send({ status: false, msg: "Please enter valide price" }) }
     if (data.style) {

@@ -35,7 +35,8 @@ exports.create = async function (req, res) {
     let data = req.body
     if(Object.keys(data).length==0){return res.status(400).send({status:false,msg:"Please enter data"})}
     let files = req.files
-    if (files.length==0 ){return res.status(400).send({ status: false, msg: "files are empty" })}
+    
+    if (!files||files.length==0 ){return res.status(400).send({ status: false, msg: "files are empty" })}
     let uploadedFileURL = await uploadFile(files[0])
 
     let { fname, lname, email, phone, password, address } = data
@@ -59,10 +60,10 @@ exports.create = async function (req, res) {
       if (!data.address.billing.pincode) return res.status(400).send({ status: false, message: "Billing Pincode is required!" });
      //--------------------------------------check validetion of address----------------------------------------------------------//
       if(!isValide(data.address.shipping.city))return res.status(400).send({ status: false, msg: " invalid  city " })
-      if(!isValide(data.address.shipping.street))return res.status(400).send({ status: false, msg: " invalid  street " })
+     
       if(!isValidpin(data.address.shipping.pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
       
-      if(!isValide(data.address.billing.street))return res.status(400).send({ status: false, msg: " invalid  street " })
+    
       if(!isValide(data.address.billing.city))return res.status(400).send({ status: false, msg: " invalid  city " })
       if(!isValidpin(data.address.billing.pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
     }
@@ -168,8 +169,7 @@ exports.updateuser = async function (req, res) {
      
        if(shipping){
         const{street,city,pincode}=shipping
-        if(street){
-        if(!isValide(street))return res.status(400).send({ status: false, msg: " invalid  street " })}
+       
         if(city){
         if(!isValide(city))return res.status(400).send({ status: false, msg: " invalid  city " })}
         if(pincode){
@@ -181,8 +181,7 @@ exports.updateuser = async function (req, res) {
        
       }else{data.address.shipping=useridvalid.address.shipping}
        if(billing){
-        if(data.address.billing.street){
-        if(!isValide(data.address.billing.street))return res.status(400).send({ status: false, msg: " invalid  street of billig" })}
+       
         if(data.address.billing.city){
         if(!isValide(data.address.billing.city))return res.status(400).send({ status: false, msg: " invalid  city of billing " })}
         if(data.address.billing.pincode){
@@ -205,7 +204,7 @@ exports.updateuser = async function (req, res) {
 
     const updatedata = await usermodel.findByIdAndUpdate(userid, { $set: data }, { new: true })
     if (!updatedata) { return res.status(404).send({ status: false, msg: "userid is not exist" }) }
-    return res.status(200).send({ status: true, msg: "User profile updated", data: updatedata })
+    return res.status(200).send({ status: true, msg: "Update user profile is successful", data: updatedata })
   } catch (err) { return res.status(500).send({ status: false, msg: err.message }) }
 }
 
