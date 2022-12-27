@@ -16,6 +16,8 @@ mongoose.connect('mongodb+srv://modassar123:modassar1234@test.ahxnnau.mongodb.ne
 
 app.use('/',route)
 
+
+
 app.listen(3000,()=>{
     console.log('express app running on port 3000')
 })
