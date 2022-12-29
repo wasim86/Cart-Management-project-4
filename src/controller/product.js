@@ -73,13 +73,23 @@ exports.getproduct = async function (req, res) {
   try {
     const data = req.query
     let newdata = { isDeleted: false }
+    
+    if (data.size){ 
+       const arr = ["S", "XS", "M", "X", "L", "XXL", "XL"]
+        if (!arr.includes(data.size)) {
 
-    if (data.size) newdata.availableSizes = data.size
+          return res.status(400).send({ status: false, msg: "please enter size it should be like these ['S', 'XS','M,'X','L','XXL','XL']" })
+        }
+        newdata.availableSizes = data.size
+  }
     if (data.name) newdata.title = data.name
     if (data.price) newdata.price = data.price
     let new2data = {}
-    if (data.priceshort == -1) new2data.price = -1
-    new2data.price = 1
+    if(data.pricesort){
+    if(!(data.pricesort==1||data.pricesort==-1)){return res.status(400).send({status:false,msg:"please enter should be 1 or -1"})}else{
+    if (data.pricesort == -1) {new2data.price = -1}
+    else{ new2data.price = 1}}
+  }
     let abc = {}
     if (data.priceGreaterThan || data.priceLessThan) {
       if (data.priceGreaterThan) abc.$gt = data.priceGreaterThan
@@ -103,7 +113,7 @@ exports.getProductbyid = async function (req, res) {
   try {
 
     let productId = req.params.productId
-    if (!objectId(productId)) return res.status(400).send({ status: false, msg: "invalid productId" })
+    if (!objectId.isValid(productId)) return res.status(400).send({ status: false, msg: "invalid productId" })
 
     let product = await productmodel.findOne({ isDeleted: false, _id: productId })
     if (!product) return res.status(404).send({ status: false, msg: "product not found" })
@@ -115,14 +125,15 @@ exports.getProductbyid = async function (req, res) {
   }
 }
 
-/***********************************************************updateproduct***************************************************************************8 */
+/***********************************************************updateproduct****************************************************************************/
 exports.updateProduct = async function (req, res) {
   try {
     let productId = req.params.productId
     let data = req.body
     const obj = {}
-
-    if (!objectId(productId)) return res.status(400).send({ status: false, msg: "invalid productId" })
+    
+    if(Object.keys(data).length==0){return res.status(400).send({status:false,msg:"Please enter data"})}
+    if (!objectId.isValid(productId)) return res.status(400).send({ status: false, msg: "invalid productId" })
     let { title, description, price, currencyId, currencyFormat, style, availableSizes, installments, productImag } = data
     if (productImag) {
       const files = req.files

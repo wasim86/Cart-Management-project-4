@@ -6,8 +6,8 @@ const objectId = mongoose.Types.ObjectId
 exports.authentication = function (req, res, next) {
     try {
         let token = req.headers.authorization
-        token = token.split(" ")
         if (!token) return res.status(400).send({ status: false, message: "Token is mandatory" })
+        token = token.split(" ")
         jwt.verify(token[1], "project5", (error, decoded) => {
             if (error) return res.status(401).send({ status: false, message: error.message })
             req.id = decoded.userId

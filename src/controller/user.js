@@ -22,11 +22,11 @@ const isValidpin = function (value) {
   let pin = /^[0-9]{6}$/;
   if (pin.test(value)) return true;
 };
-const isvalidRequest = function (body) {
-  return Object.keys(body).length > 0 
-}
 function isValide(value) {
   return (typeof value === "string" && value.trim().length > 0 && value.match(/^[A-Za-z ][A-Za-z _]{1,100}$/));
+}
+function street(value){
+  return (typeof value === "string" && value.trim().length > 0 && value.match(/^[A-Za-z0-9 _ ,.]*$/))
 }
 
 //============================create user=======================================================//
@@ -60,10 +60,10 @@ exports.create = async function (req, res) {
       if (!data.address.billing.pincode) return res.status(400).send({ status: false, message: "Billing Pincode is required!" });
      //--------------------------------------check validetion of address----------------------------------------------------------//
       if(!isValide(data.address.shipping.city))return res.status(400).send({ status: false, msg: " invalid  city " })
-     
+       if(!street(data.address.shipping.street))return res.status(400).send({status:false,msg:"please enter valid street"})
       if(!isValidpin(data.address.shipping.pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
       
-    
+      if(!street(data.address.billing.street))return res.status(400).send({status:false,msg:"please enter valid street"})
       if(!isValide(data.address.billing.city))return res.status(400).send({ status: false, msg: " invalid  city " })
       if(!isValidpin(data.address.billing.pincode)) return res.status(400).send({ status: false, msg: " invalid  pincode " })
     }
@@ -98,6 +98,10 @@ exports.login = async function (req, res) {
     let data = req.body;
     if(Object.keys(data).length==0){return res.status(400).send({status:false,msg:"Please enter data"})}
     let { email, password } = data
+
+    if (!email) return res.status(400).send({ status: false, msg: "email is mendatory" })
+    if (!password) return res.status(400).send({ status: false, msg: "password is mendatory" })
+    
     let userEmail = await usermodel.findOne({ email: email })
     if (!userEmail) return res.status(404).send({ status: false, msg: "email not found" })
 
@@ -169,7 +173,10 @@ exports.updateuser = async function (req, res) {
      
        if(shipping){
         const{street,city,pincode}=shipping
-       
+        if(street){
+          if(!street(data.address.shipping.street))return res.status(400).send({status:false,msg:"please enter valid street"})
+
+        }
         if(city){
         if(!isValide(city))return res.status(400).send({ status: false, msg: " invalid  city " })}
         if(pincode){
@@ -181,7 +188,9 @@ exports.updateuser = async function (req, res) {
        
       }else{data.address.shipping=useridvalid.address.shipping}
        if(billing){
-       
+        if(data.address.billing.street){
+          if(!isValide(data.address.billing.street))return res.status(400).send({ status: false, msg: " invalid  street of billing " })
+        }
         if(data.address.billing.city){
         if(!isValide(data.address.billing.city))return res.status(400).send({ status: false, msg: " invalid  city of billing " })}
         if(data.address.billing.pincode){

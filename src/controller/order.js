@@ -32,7 +32,7 @@ exports.createorder = async function (req, res) {
 
     const savedata = await ordermodel.create(data)
     return res.status(200).send({ status: true, msg: "create successful", order: savedata })
-  } catch (err) { return res.status(500).send({ status: false, msg: err.message }) }
+  } catch (err) { return res.status(500).send({ status: false, msg: err.msg }) }
 
 }
 

@@ -44,7 +44,7 @@ exports.createcart = async function (req, res) {
         }
 
         const newsavedata = await cartmodel.findOneAndUpdate({ _id: cartId, userId: userId }, { $set: { items: newabc, totalItems: newabc.length }, $inc: { totalPrice: +productexist.price } }, { new: true }).populate('items.productId', 'title productImage price')
-        return res.status(201).send({ status: false, msg: "sucessfully added", data: newsavedata })
+        return res.status(200).send({ status: false, msg: "sucessfully added", data: newsavedata })
       }
     }
 

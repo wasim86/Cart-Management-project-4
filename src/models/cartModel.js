@@ -1,40 +1,40 @@
 const { type } = require("express/lib/response");
 const mongoose = require("mongoose")
-const ObjectId= mongoose.Schema.Types.ObjectId
+const ObjectId = mongoose.Schema.Types.ObjectId
 
 const cartSchema = new mongoose.Schema({
-  userId:{
+  userId: {
     type: ObjectId,
     ref: "User",
     required: true,
     unique: true
   },
-  items:[{
-    productId:{
-        type: ObjectId,
-        ref: "product",
-        required: true
+  items: [{
+    productId: {
+      type: ObjectId,
+      ref: "product",
+      required: true
 
     },
     quantity: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true
     }
   }],
 
-  totalPrice:{
-    type:Number,
+  totalPrice: {
+    type: Number,
     rquired: true,
-    
+
   },
-  totalItems:{
+  totalItems: {
     type: Number,
     required: true,
-    default:1
+    default: 1
   }
-},{ timestamps: true});
+}, { timestamps: true });
 
 
 
-module.exports = mongoose.model('Carts',cartSchema)
+module.exports = mongoose.model('Carts', cartSchema)
 

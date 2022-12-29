@@ -21,7 +21,7 @@ router.get("/products/:productId",getProductbyid)
 router.put("/products/:productId",updateProduct)
 router.delete("/products/:productId",deleteProductById)
 
-router.post("/user/:userId/cart",authentication,autherization,createcart)
+router.post("/users/:userId/cart",authentication,autherization,createcart)
 router.put("/users/:userId/cart",authentication,autherization,updatecart)
 router.get("/users/:userId/cart",authentication,autherization,getCartData)
 router.delete("/users/:userId/cart",authentication,autherization,deletecart)
