@@ -8,19 +8,11 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(multer().any())
 
-<<<<<<< HEAD
-mongoose.connect('mongodb+srv://modassar123:modassar1234@test.ahxnnau.mongodb.net/group02Database', {
+mongoose.connect('mongodb+srv://Wasim:sjdwsm86@mycluster.hazwc4e.mongodb.net/group02Database', {
     useNewUrlParser: true
 }, mongoose.set('strictQuery', false))
     .then(() => console.log("mongoose is connected"))
     .catch(err => console.log(err))
-=======
-mongoose.connect('mongodb+srv://modassar123:modassar1234@test.ahxnnau.mongodb.net/group02Database',{
-    useNewUrlParser:true
-},mongoose.set('strictQuery', false))
-.then(()=>console.log("mongoDB is connected"))
-.catch(err=>console.log(err))
->>>>>>> d8cdb33 (done)
 
 app.use('/', route)
 
